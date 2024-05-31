@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Responsive Navbar</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+  <style>
+    .card{
+      box-shadow: 0 0 20px 0 black;
+      padding: 10px;
+      margin-left: 5%;
+    }
+
+  </style>
+</head>
+<body>
+  <br>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <div class="container">
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav mx-auto">
+        {% for time in timeing %}
+        <li class="nav-item">
+          <a class="nav-link btn btn-primary mr-2" href="/tickets/{{ time.id }}">{{ time.show_time }}</a>
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+</nav>
+<br>
+<br>
+<div class="container1" style="display: flex;">
+  <div class="card" style="width: 30rem;">
+    <img src="/media/{{ movie.poster }}" class="card-img-top" alt="{{ movie.movie_name }}">
+    <div class="card-body">
+      <h5 class="card-title">{{ movie.movie_name }}</h5>
+      <p class="card-text">{{ movie.actor_name }}</p>
+    </div>
+  </div>
+  <div class="container2" style="padding: 100px;margin-top: 2%;">
+    <h3>AMB Cinemas/{{ movie.screen_no }}</h3>
+    <hr>
+    <h4>Description</h4>
+    <p class="card-text">{{ movie.description }}</p>
+  </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
