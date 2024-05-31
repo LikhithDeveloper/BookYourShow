@@ -39,22 +39,21 @@
         <hr>
         <br>
         <div class="row">
-            {% for book in booking %}
+            {% for hook in hooking %}
             <div class="col-md-4">
                 <div class="movie-card">
-                    <div class="card-img-top"><img src = "/media/{{book.poster}}" alt="{{book.movie_name}}"></div>
+                    <div class="card-img-top"><img src="/media/{{hook.poster}}" alt="{{hook.movie_name}}"></div>
                     <div class="card-body">
-                        <h5 class="card-title">{{book.movie_name}}</h5>
-                        <p class="card-text">{{book.actor_name}}</p>
-                        <a href="/time/{{book.id}}" class="btn btn-primary">Book Now</a>
+                        <h5 class="card-title">{{hook.movie_name}}</h5>
+                        <p class="card-text">{{hook.actor_name}}</p>
+                        <a href="/time/{{hook.id}}" class="btn btn-primary">Book Now</a>
                     </div>
                 </div>
             </div>
             {% endfor %}
-            
-            <!-- Add more movie cards here -->
         </div>
     </div>
+    
 
     <!-- Bootstrap JS -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>

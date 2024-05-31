@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render,redirect
 from .models import *
 from datetime import datetime,timedelta
 
@@ -7,14 +7,15 @@ from datetime import datetime,timedelta
 
 def book(request):
     queryset = Book.objects.all()
-    context = {'booking': queryset}
-    return render(request,"ui.html",context)
+    print(queryset[0].poster)
+    context = {'hooking': queryset}
+    return render(request,"ux.html",context)
 import datetime
 def time(request,id):  
     today = datetime.date.today() 
     current_time = datetime.datetime.now().time()
-    queryset = Book.objects.get(id=id) 
-    dayset = Days.objects.get(day = today) 
+    queryset = Book.objects.get(id=id)
+    dayset = Days.objects.get(cinema= queryset,day = today) 
     queryset1 = Show.objects.filter(movie = queryset , date = dayset)
     day = dayset.day
     x = []
@@ -43,9 +44,14 @@ def movie(request):
         screen_no = data.get('screen_no')
         description = data.get('description')
         ticket_price = data.get('ticket_price')
-        poster = request.FILES.get('poster')      #for files
+        poster = request.FILES.get('image')      #for files
         day_1 = datetime.datetime.strptime(data.get('day_1'), '%Y-%m-%d')
         day_n = datetime.datetime.strptime(data.get('day_n'), '%Y-%m-%d')
+        print(request.POST)
+        print(request.FILES )
+        print(request.FILES.get('image') )
+
+        print(poster)
         Slot_Register.objects.create(
             distrubuter = distrubuter,
             movie_name = movie_name,

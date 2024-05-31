@@ -12,7 +12,7 @@ class Slot_Register(models.Model):
     screen_no = models.CharField(max_length=20,default="1")
     description = models.TextField(default="add description please")
     ticket_price = models.IntegerField()
-    poster = models.ImageField(upload_to="posters",null=True, blank=True)
+    poster = models.ImageField(upload_to="posters/")
     created_at = models.DateTimeField(default=timezone.now)
     def __str__(self):
         return self.movie_name
@@ -25,7 +25,7 @@ class Book(models.Model):
     screen_no = models.CharField(max_length=20,default="1")
     ticket_price = models.IntegerField()
     description = models.TextField(default="add description please")
-    poster = models.ImageField(upload_to="posters",null=True, blank=True)
+    poster = models.ImageField(upload_to="posters/")
     created_at = models.DateTimeField(default=timezone.now)
 
     def __str__(self):

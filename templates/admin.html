@@ -8,7 +8,7 @@
 </head>
 <body>
     <div class="container mt-5">
-        <form method="post" enctype="multipart/form-data-">
+        <form method="post" enctype="multipart/form-data">
             <h2>Movie Registration Form</h2>
             <hr>
             {% csrf_token %}
@@ -33,12 +33,12 @@
                 <textarea name="description" required class="form-control" id="floatingTextarea"></textarea>
               </div>
               <div class="mb-3">
-                <label for="exampleInputEmail1" class="form-label">Ticket Price</label>
-                <input type="number" name="ticket_price" required class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
+                <label for="exampleInputEmail1" class="form-label">Poster</label>
+                <input type="file" name="image" required class="form-control">
               </div>
               <div class="mb-3">
-                <label for="exampleInputEmail1" class="form-label">Poster</label>
-                <input type="file" name="poster" required class="form-control">
+                <label for="exampleInputEmail1" class="form-label">Ticket Price</label>
+                <input type="number" name="ticket_price" required class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
               </div>
               <div class="mb-3">
                 <label for="date-input">Date Input (yyyy-mm-dd):</label><br>
