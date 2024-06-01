@@ -1,39 +1,97 @@
 from django.shortcuts import render,redirect
 from .models import *
 from datetime import datetime,timedelta
+import datetime
+from django.contrib import messages
+from django.contrib.auth.models import User
+from django.contrib.auth import authenticate, login
+from django.contrib.auth.decorators import login_required
+
 
 
 # Create your views here.
-
+@login_required(login_url='/login/')
 def book(request):
     queryset = Book.objects.all()
     print(queryset[0].poster)
     context = {'hooking': queryset}
     return render(request,"ux.html",context)
-import datetime
-def time(request,id):  
+
+def date(request,id):
     today = datetime.date.today() 
     current_time = datetime.datetime.now().time()
     queryset = Book.objects.get(id=id)
-    dayset = Days.objects.get(cinema= queryset,day = today) 
-    queryset1 = Show.objects.filter(movie = queryset , date = dayset)
+    dayset = Days.objects.all()
+    for i in dayset:
+        if i.day < today:
+            i.delete()
+    dayset1 = Days.objects.filter(cinema = queryset)
+    
+    context = {'movie':queryset,'dates':dayset1}
+    return render(request,"date.html",context)
+
+
+def time(request,id):  
+    today = datetime.date.today() 
+   # print(today)
+    current_time = datetime.datetime.now().time()
+    dayset = Days.objects.get(id = id) 
+   # print(dayset)
+    name = dayset.cinema.movie_name
+   # print(name)
+    queryset = Book.objects.get(movie_name = name)
+   # print(queryset)
+    queryset1 = Show.objects.filter(movie = queryset , date = dayset)           
+   # print(queryset1)
     day = dayset.day
+   # print(day)
     x = []
-    for i in queryset1:
-        if i.time > current_time and i.date.day == today:
-            x.append(i)
-    print(x)
+    if day == today:
+        for i in queryset1:
+            print(i.date)
+            if i.time > current_time and str(i.date) == str(today):
+                x.append(i)
+    else:
+        x = queryset1
+
     context = {'movie':queryset,'timeing':x}
     return render(request,"book.html",context)
 
 def tickets(request,id):
     queryset = Show.objects.get(id = id)
-    name = queryset.movie.movie_name
-    print(name)
-    context = {'shows':queryset}
-    print(queryset)
+    queryset1 = BookedSeat.objects.filter(book = queryset)
+    x = Total.objects.all()
+    occupied_seats = [int(i.seat_number) for i in queryset1]
+   # print(queryset1)
+   # print(occupied_seats)
+    seat_range = range(11, 81) 
+    price = queryset.movie.ticket_price
+   # print(price) 
+    context = {'movies':queryset,'occupied':occupied_seats,'seat_range':seat_range}
+    if request.method == "POST":
+        selected_seats = request.POST.get('selected_seats')
+        no_of_seats = request.POST.get('no_of_seats')
+        #print(no_of_seats)
+        #print(selected_seats)
+        length = len(selected_seats)
+        size = length // int(no_of_seats)
+        parts = [selected_seats[i:i+size] for i in range(0, length, 2)]
+        #print(parts)
+        #print(len(parts))
+        if len(parts) != int(no_of_seats):
+            messages.warning(request, "Select the number of seats you selected")
+            return redirect(f'/tickets/{id}')
+        else:
+            for i in parts:
+                BookedSeat.objects.create(book =queryset,seat_number = int(i)) 
+            messages.info(request,f"The selected seates are {parts} of {len(parts)*price} at {queryset.time} on {queryset.date.day}")
+            return redirect(f'/tickets/{id}')
 
+
+    
     return render(request,"tickets.html",context)
+
+
 
 def movie(request):
     if request.method == "POST":
@@ -83,3 +141,69 @@ def movie(request):
                         time = k.show_time
                     )
     return render(request,"admin.html")
+
+
+
+def login_page(request):
+    # Check if the HTTP request method is POST (form submission)
+    if request.method == "POST":
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+         
+        # Check if a user with the provided username exists
+        if not User.objects.filter(username=username).exists():
+            # Display an error message if the username does not exist
+            messages.error(request, 'Invalid Username')
+            return redirect('/login/')
+         
+        # Authenticate the user with the provided username and password
+        user = authenticate(username=username, password=password)
+         
+        if user is None:
+            # Display an error message if authentication fails (invalid password)
+            messages.error(request, "Invalid Password")
+            return redirect('/login/')
+        elif username=="admin":
+            return redirect('/movie')
+            # Log in the user and redirect to the home page upon successful login
+        else:
+            login(request, user)
+            return redirect('/book/')
+     
+    # Render the login page template (GET request)
+    return render(request, 'login.html')
+ 
+# Define a view function for the registration page
+def register_page(request):
+    # Check if the HTTP request method is POST (form submission)
+    if request.method == 'POST':
+        first_name = request.POST.get('first_name')
+        last_name = request.POST.get('last_name')
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+         
+        # Check if a user with the provided username already exists
+        user = User.objects.filter(username=username)
+         
+        if user.exists():
+            # Display an information message if the username is taken
+            messages.info(request, "Username already taken!")
+            return redirect('/register/')
+         
+        # Create a new User object with the provided information
+        user = User.objects.create_user(
+            first_name=first_name,
+            last_name=last_name,
+            username=username
+        )
+         
+        # Set the user's password and save the user object
+        user.set_password(password)
+        user.save()
+         
+        # Display an information message indicating successful account creation
+        messages.info(request, "Account created Successfully!")
+        return redirect('/')
+     
+    # Render the registration page template (GET request)
+    return render(request, 'register.html')

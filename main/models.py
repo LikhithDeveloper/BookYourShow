@@ -36,7 +36,7 @@ class Days(models.Model):
     cinema = models.ForeignKey(Book,on_delete=models.CASCADE)
     day = models.DateField(default=True,null=True)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return str(self.day)
 
 
@@ -53,13 +53,17 @@ class Show(models.Model):
 class BookedSeat(models.Model):
     book = models.ForeignKey(Show, on_delete=models.CASCADE)
     seat_number = models.CharField(max_length=10)
+    total_seats = models.IntegerField(default=70)
 
     def __str__(self):
-        return f"Booked Seat {self.seat_number} for {self.book.movie_name}"
+        return f"Booked Seat {self.seat_number} for {self.book.movie.movie_name}"
     
 
 class Timeings(models.Model):
     show_time = models.TimeField(null=True)
+
+class Total(models.Model):
+    total_no = models.IntegerField()
 
 
 @receiver(post_save, sender=Slot_Register)

@@ -27,6 +27,11 @@ urlpatterns = [
     path('time/<id>',time,name='time'),
     path('tickets/<id>',tickets,name='tickets'),
     path('movie/',movie,name='movie'),
+    path('date/<id>',date,name='date'),
+    #path('print/',print,name='print')
+    path('', login_page, name='login_page'),    # Login page
+    path('register/', register_page, name='register'),  # Registration page
+
 ] 
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
