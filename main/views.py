@@ -1,6 +1,6 @@
 from django.shortcuts import render,redirect
 from .models import *
-from datetime import datetime,timedelta
+from datetime import datetime,timedelta, time
 import datetime
 from django.contrib import messages
 from django.contrib.auth.models import User
@@ -9,10 +9,10 @@ from django.contrib.auth.decorators import login_required
 
 
 
-@login_required(login_url='/login/')
+@login_required(login_url='login_page/')
 def book(request):
     queryset = Book.objects.all()
-    print(queryset[0].poster)
+    # print(queryset[0].poster)
     context = {'hooking': queryset}
     return render(request,"ux.html",context)
 
@@ -30,7 +30,7 @@ def date(request,id):
     return render(request,"date.html",context)
 
 
-def time(request,id):  
+def time1(request,id):  
     today = datetime.date.today() 
    # print(today)
     current_time = datetime.datetime.now().time()
@@ -52,6 +52,7 @@ def time(request,id):
                 x.append(i)
     else:
         x = queryset1
+        print(x)
 
     context = {'movie':queryset,'timeing':x}
     return render(request,"book.html",context)
@@ -91,7 +92,7 @@ def tickets(request,id):
     return render(request,"tickets.html",context)
 
 
-
+@login_required(login_url='/')
 def movie(request):
     if request.method == "POST":
         data = request.POST
@@ -104,9 +105,19 @@ def movie(request):
         poster = request.FILES.get('image')      #for files
         day_1 = datetime.datetime.strptime(data.get('day_1'), '%Y-%m-%d')
         day_n = datetime.datetime.strptime(data.get('day_n'), '%Y-%m-%d')
-        print(request.POST)
-        print(request.FILES )
-        print(request.FILES.get('image') )
+        # print(request.POST)
+        # print(request.FILES )
+        # print(request.FILES.get('image') )
+        if not Timeings.objects.all():
+            timings = [
+                time(11, 0),    # 11:00 AM
+                time(14, 15),   # 2:15 PM
+                time(18, 15),   # 6:15 PM
+                time(21, 45),   # 9:45 PM
+            ]
+        # print(timings)
+            for show_time in timings:
+                Timeings.objects.create(show_time=show_time)
 
         print(poster)
         Slot_Register.objects.create(
@@ -119,8 +130,8 @@ def movie(request):
             poster = poster
         )  
         queryset = Book.objects.get(movie_name = movie_name)  
-        print(day_1)
-        print(day_n)
+        # print(day_1)
+        # print(day_n)
         current_date = day_1
         end_date = day_n
         while current_date <= end_date:
@@ -139,6 +150,14 @@ def movie(request):
                         show_time = str(k.show_time),
                         time = k.show_time
                     )
+    # timings = [
+    #     time(11, 0),    # 11:00 AM
+    #     time(14, 15),   # 2:15 PM
+    #     time(18, 15),   # 6:15 PM
+    #     time(21, 45),   # 9:45 PM
+    # ]
+    # for show_time in timings:
+    #     Timeings.objects.create(show_time=show_time)
     return render(request,"admin.html")
 
 
